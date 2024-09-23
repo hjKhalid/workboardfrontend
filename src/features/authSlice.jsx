@@ -13,17 +13,20 @@ const initialState = {
   error: null,
 };
 
+
 // Login user
 export  const login = createAsyncThunk(
   "auth/login",
   async (credentials, thunkAPI) => {
     try {
       const response = await axios.post(
-        "/api/login/",
+        "http://localhost:8000/api/login/",
         credentials
       );
       const token = response.data.access;
       localStorage.setItem("token", token);
+      localStorage.setItem("userName", credentials?.username);
+
       return (token);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -36,7 +39,7 @@ export const signup = createAsyncThunk(
   "auth/signup",
   async (userInfo, thunkAPI) => {
     try {
-      await axios.post("/api/signup/", userInfo);
+      await axios.post("http://localhost:8000/api/signup/", userInfo);
       return "Signup successful";
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -67,6 +70,7 @@ const authSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.loading = false;
+
       })
       .addCase(signup.rejected, (state, action) => {
         state.error = action.payload;
